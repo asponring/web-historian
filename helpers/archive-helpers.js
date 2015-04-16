@@ -37,28 +37,30 @@ exports.readListOfUrls = function(callback){
 };
 
 exports.isUrlInList = function(target, callback){
-
-  // var isInThis;
   exports.readListOfUrls(function(array) {
-    console.log(array, target);
     callback(array.indexOf(target) > -1);
-
-    // console.log("in cb " + isInThis);
   });
-
-  // console.log("outside cb " + isInThis);
-  // return isInThis;
 };
 
 exports.addUrlToList = function(data){
- data = data.substring(4) + '\n';
+  data += '\n';
   fs.appendFile(exports.paths.list, data, function (err) {
     if (err) throw err;
   });
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(target, callback){
+  fs.readdir(exports.paths.archivedSites, function(err, files) {
+    if (err) {
+      throw new Error(err.message);
+    } else {
+      callback(files.indexOf(target) > -1);
+    }
+  });
 };
 
 exports.downloadUrls = function(){
+
+
+
 };

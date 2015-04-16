@@ -15,7 +15,6 @@ exports.serveAssets = function(res, asset, callback, statusCode) {
   // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
    fs.readFile(asset, function(err, content) {
     if(err) {
-      console.log("404");
       callback(res, err.messge, 404);
     } else {
       callback(res, content, statusCode);

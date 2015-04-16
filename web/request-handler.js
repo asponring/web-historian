@@ -10,7 +10,6 @@ var actions = {
   },
   "POST": function(req, res){
     collectData(req, function(data) {
-      console.log("Collected Data");
       // Branch - either serve page or redirect to loading
       data = data.substring(4);
       archive.isUrlInList(data, function(isInList){
