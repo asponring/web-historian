@@ -20,9 +20,7 @@ var htmlFetcher = function() {
     for(var i =0; i < array.length-1; i++){
       archive.isURLArchived(array[i], function(isArchived){
         if(!isArchived) {
-          console.log("SAVE DIS FILE!!");
-        } else {
-          console.log("SERVE THIS FILE!");
+          archive.downloadUrls();
         }
       });
     }
