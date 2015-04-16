@@ -1,21 +1,18 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var urlParser = require('url');
+var httpHelpers = require('./http-helpers.js')
 var fs = require('fs');
 
 var actions = {
   "GET": function(req, res, fileName) {
-    fs.readFile( fileName, function(err, content) {
-      if(err) {
-        sendResponse(res, err.messge, 404);
-      } else {
-        sendResponse(res, content, 200);
-      }
-    });
+    httpHelpers.serveAssets(res, fileName, sendResponse, 200);
   },
   "POST": function(req, res){
     collectData(req, function(data) {
-      sendResponse(res, data, 302);
+// TODO check if data is in LIST --- CALL Archive Helpers is URL in List
+      httpHelpers.serveAssets(res, data, sendResponse, 302);
+      // sendResponse(res, data, 302);
     });
 
   }
