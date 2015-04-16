@@ -5,7 +5,6 @@ var fs = require('fs');
 
 var actions = {
   "GET": function(req, res, fileName) {
-    console.log(fileName);
     fs.readFile( fileName, function(err, content) {
       if(err) {
         sendResponse(res, err.messge, 404);
@@ -13,7 +12,14 @@ var actions = {
         sendResponse(res, content, 200);
       }
     });
+  },
+  "POST": function(req, res){
+    collectData(req, function(data) {
+      sendResponse(res, data, 302);
+    });
+
   }
+
 };
 
 exports.handleRequest = function (req, res) {
@@ -37,3 +43,23 @@ var sendResponse = function(response, data, statusCode){
   response.writeHead(statusCode);
   response.end(data);
 };
+
+var collectData = function(req, callback){
+  var requestData = "";
+  req.on('data', function(chunk){
+    requestData += chunk;
+  });
+
+  req.on('end', function() {
+    archive.addUrlToList(requestData);
+    callback(requestData);
+  });
+
+}
+
+
+
+
+
+
+
