@@ -10,13 +10,19 @@ var actions = {
   },
   "POST": function(req, res){
     collectData(req, function(data) {
-// TODO check if data is in LIST --- CALL Archive Helpers is URL in List
-      httpHelpers.serveAssets(res, data, sendResponse, 302);
-      // sendResponse(res, data, 302);
+      console.log("Collected Data");
+      // Branch - either serve page or redirect to loading
+      data = data.substring(4);
+      archive.isUrlInList(data, function(isInList){
+        if (isInList) {
+          httpHelpers.serveAssets(res, archive.paths.archivedSites + "/" + data, sendResponse, 302);
+        } else {
+          archive.addUrlToList(data);
+          httpHelpers.serveAssets(res, archive.paths.siteAssets + '/loading.html', sendResponse, 302);
+        }
+      });
     });
-
   }
-
 };
 
 exports.handleRequest = function (req, res) {
@@ -48,7 +54,6 @@ var collectData = function(req, callback){
   });
 
   req.on('end', function() {
-    archive.addUrlToList(requestData);
     callback(requestData);
   });
 

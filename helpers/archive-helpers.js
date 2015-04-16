@@ -36,12 +36,18 @@ exports.readListOfUrls = function(callback){
   });
 };
 
-exports.isUrlInList = function(target){
-  var isInThis;
+exports.isUrlInList = function(target, callback){
+
+  // var isInThis;
   exports.readListOfUrls(function(array) {
-    isInThis = array.indexOf(target) > -1;
+    console.log(array, target);
+    callback(array.indexOf(target) > -1);
+
+    // console.log("in cb " + isInThis);
   });
-  return isInThis;
+
+  // console.log("outside cb " + isInThis);
+  // return isInThis;
 };
 
 exports.addUrlToList = function(data){
