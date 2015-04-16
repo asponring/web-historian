@@ -1,31 +1,39 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var urlParser = require('url');
-// require more modules/folders here!
+var fs = require('fs');
 
-var routes = {
-  '/': true
+var actions = {
+  "GET": function(req, res, fileName) {
+    console.log(fileName);
+    fs.readFile( fileName, function(err, content) {
+      if(err) {
+        sendResponse(res, err.messge, 404);
+      } else {
+        sendResponse(res, content, 200);
+      }
+    });
+  }
 };
 
 exports.handleRequest = function (req, res) {
-  // res.end(archive.paths.list);
-
-  var parts = urlParser.parse(req.url);
-  var route = routes[parts.pathname];
-  if (route) {
-    sendResponse(res);
+  var fileName = urlParser.parse(req.url).pathname;
+  if(fileName === '/') {
+    fileName = archive.paths.siteAssets +'/index.html';
   } else {
-    console.log("404");
-    sendResponse(res, "Not Found", 404);
+    fileName = archive.paths.archivedSites + fileName;
   }
 
-  // sendResponse(res);
-
-
+  var action = actions[req.method];
+  if(action) {
+    action(req, res, fileName);
+  }
 };
+
+
 
 var sendResponse = function(response, data, statusCode){
   statusCode = statusCode || 200;
   response.writeHead(statusCode);
-  response.end();
+  response.end(data);
 };
