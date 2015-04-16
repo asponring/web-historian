@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var http = require('http');
+var requestHandler = require('../web/request-handler.js')
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -59,13 +60,16 @@ exports.isURLArchived = function(target, callback){
   });
 };
 
-exports.downloadUrls = function(){
-  http.get("http://www.google.com/index.html", function(res) {
-    console.log(res);
-    console.log("Got response: " + res.statusCode);
+exports.downloadUrls = function(site){
+  console.log(site);
+  http.get("http://" + site, function(res) {
+    requestHandler.collectData(res, function(html) {
+      fs.appendFile(exports.paths.archivedSites + "/" + site + ".html", html, function (err) {
+        if (err) throw err;
+        console.log('The "data to append" was appended to file!');
+      });
+    });
   }).on('error', function(e) {
     console.log("Got error: " + e.message);
   });
-
-
 };

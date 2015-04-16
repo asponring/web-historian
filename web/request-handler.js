@@ -9,12 +9,11 @@ var actions = {
     httpHelpers.serveAssets(res, fileName, sendResponse, 200);
   },
   "POST": function(req, res){
-    collectData(req, function(data) {
-      // Branch - either serve page or redirect to loading
+    exports.collectData(req, function(data) {
       data = data.substring(4);
       archive.isUrlInList(data, function(isInList){
         if (isInList) {
-          httpHelpers.serveAssets(res, archive.paths.archivedSites + "/" + data, sendResponse, 302);
+          httpHelpers.serveAssets(res, archive.paths.archivedSites + "/" + data + ".html", sendResponse, 302);
         } else {
           archive.addUrlToList(data);
           httpHelpers.serveAssets(res, archive.paths.siteAssets + '/loading.html', sendResponse, 302);
@@ -26,8 +25,11 @@ var actions = {
 
 exports.handleRequest = function (req, res) {
   var fileName = urlParser.parse(req.url).pathname;
+  console.log(fileName);
   if(fileName === '/') {
     fileName = archive.paths.siteAssets +'/index.html';
+  } else if (fileName === '/public/styles.css') {
+    fileName = archive.paths.siteAssets + "/styles.css";
   } else {
     fileName = archive.paths.archivedSites + fileName;
   }
@@ -46,7 +48,7 @@ var sendResponse = function(response, data, statusCode){
   response.end(data);
 };
 
-var collectData = function(req, callback){
+exports.collectData = function(req, callback){
   var requestData = "";
   req.on('data', function(chunk){
     requestData += chunk;
@@ -56,7 +58,7 @@ var collectData = function(req, callback){
     callback(requestData);
   });
 
-}
+};
 
 
 
