@@ -6,7 +6,7 @@ var fs = require('fs');
 
 var actions = {
   "GET": function(req, res, fileName) {
-    httpHelpers.serveAssets(res, fileName, sendResponse, 200);
+    httpHelpers.serveAssets(res, fileName, sendResponse, 200, fileName);
   },
   "POST": function(req, res){
     exports.collectData(req, function(data) {
@@ -25,7 +25,6 @@ var actions = {
 
 exports.handleRequest = function (req, res) {
   var fileName = urlParser.parse(req.url).pathname;
-  console.log(fileName);
   if(fileName === '/') {
     fileName = archive.paths.siteAssets +'/index.html';
   } else if (fileName === '/public/styles.css') {
@@ -42,9 +41,16 @@ exports.handleRequest = function (req, res) {
 
 
 
-var sendResponse = function(response, data, statusCode){
+var sendResponse = function(response, data, statusCode, fileName){
   statusCode = statusCode || 200;
-  response.writeHead(statusCode);
+  fileName = fileName.split('.');
+  var extenstion = fileName[fileName.length - 1];
+  if (extenstion === 'css') {
+    httpHelpers.headers['Content-Type'] = 'text/css';
+  } else  {
+    httpHelpers.headers['Content-Type'] = 'text/html';
+  }
+  response.writeHead(statusCode, httpHelpers.headers);
   response.end(data);
 };
 
